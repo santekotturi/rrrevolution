@@ -44,7 +44,7 @@ f = rbind(patient1, patient2, patient3, patient4)
 
 class(f)
 
-f = data.frame(rbind(patient1, patient2, patient3, patient4), drop.factors=TRUE)
+f = data.frame(rbind(patient1, patient2, patient3, patient4))
 
 class(f)
 
@@ -66,8 +66,47 @@ f[1,]
 f$subId
 
 #some more fun
-table(f$gender)
-which(f$age > 30)
+table(f$age)
+which(f$gender == "female") 
+which(f$age > 30) #this throws an error, we'll go over factors and when you want and dont want them later. 
+split(f, f$group)
+
+# now that we have the basics down, lets import some data
+# in the folder you ran "git clone" in, there should be a file called "data.csv", let's see our 
+# R working directory to the same folder so that R can "see" this file and we can import the dataset. 
+
+
+data = read.csv("mydata.csv", header = T, stringsAsFactors = F)
+data$sums = rowSums(data[,3:7])
+
+boxplot(sums ~ group, data = data)
+
+# pretty graphs and a detour to additional packages
+# when you install R it comes with a large number of basic functions, however, 
+# lots of developers have developed additional functions packaged into libraries aka packages that 
+# you can use FOR FREE! (classic R move...)
+# one of the most popular R packages is called ggplot. Its currently called ggplot2 because its 
+# on version 2. 
+# to install a new library you need to do 2 things: 
+# 1) tell R where you want to download packages from
+# 2) install the package
+# then you can load it into your current R environment and use the new functions. 
+# R studio does the first part for you, but if youre using the regular R version or if you want to change it
+# open the R Preferences and set your "cran mirror"
+# now you install the package:
+install.packages("ggplot2")
+library(ggplot2)
+# note the presence and lack there of quotes in the last two lines. 
+# now you can checkout ggplot
+?ggplot
+
+q = ggplot(data, aes(x= group, y=sums)) 
+q = q + geom_boxplot()
+# this idea of building layers on a graph is very important and something we'll work on more later. 
+# to see your graph just use:
+q 
+
+
 
 
 
