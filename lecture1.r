@@ -77,7 +77,8 @@ split(f, f$group)
 
 
 data = read.csv("mydata.csv", header = T, stringsAsFactors = F)
-data$sums = rowSums(data[,3:7])
+
+data$sums = rowSums(data[,3:12])
 
 boxplot(sums ~ group, data = data)
 
@@ -102,11 +103,32 @@ library(ggplot2)
 
 q = ggplot(data, aes(x= group, y=sums)) 
 q = q + geom_boxplot()
-# this idea of building layers on a graph is very important and something we'll work on more later. 
+# this idea of building layers of a graph aka "The Grammar of Graphics" is very important and something we'll work on more later. 
 # to see your graph just use:
 q 
 
+#voila! 
+# you can get fancy by changing the colors manually or let ggplot give each group a color:
+q = ggplot(data, aes(x= group, y=sums, color=group)) 
+q = q + geom_boxplot()
+q
 
+# you can also add titles: 
+q = q + ggtitle("Our first graph")
+q
+
+# now for the stats: 
+?t.test
+t.test(sums ~ group, data = data)
+# because reading that can be a bit of a pain, and we know we want one particular value
+# lets store the result of the t.test in an object: 
+ttest = t.test(sums ~ group, data = data)
+# how do we find how to get our value? 
+names(ttest)
+ttest$p.value
+
+q = q + ggtitle(paste("Our first R graph with a p-value of:", substr(ttest$p.value, 0, 7), sep=" "))
+q
 
 
 
