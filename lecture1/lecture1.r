@@ -30,6 +30,7 @@ a = 2
 b = "hello"
 c = "world"
 d = paste(b, c)
+e = c()
 e = c(a, b, c, d)
 e = array()
 e[1] = a
@@ -60,8 +61,8 @@ colnames(f) = c("subId", "age", "gender", "group")
 # its THE BEST resource you have (other than yourself and your labmates)
 
 # indexing 
-f[1,1]
-f[,1]
+f[1,1]  #f[row, column]
+f[ ,1]
 f[1,]
 f$subId
 
