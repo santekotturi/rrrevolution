@@ -6,6 +6,52 @@
  # while (but not really)
  # function (args) { return } 
 
+
+ # the if loop: 
+ if(something is true){
+ 	do this
+ } else {
+ 	do something else
+ }
+
+ # can be joined together
+ if(something is true){
+ 	do this 
+ } else if(something else is true){
+ 	do something else
+ } else if(something else is true){
+ 	do this thing
+ } else {
+ 	do whatever else 
+ }
+
+ # let's get some practice with conditional statements:
+ # in your setting
+ if(group == "ctrl"){
+ 	analyze the control group
+ } else if(group == "trmtA"){
+ 	analyze treatment A group
+ } else if(group == "trmtB"){
+ 	analyze treatment B group
+ } else {
+ 	print("something went wrong, unmatched group")
+ }
+
+if(group == "ctrl" && scanner == "west"){
+	analyze the control patients that were scanned on 3T West
+} else if(group == "ctrl" && scanner == "east"){
+	analyze the control patients that were scanned on 3T East
+}
+
+if(gender == "female" || gender == "male"){
+	analyze women and men the same
+} else {
+	print("are we that progressive yet in science?")
+}
+
+# we'll see more if statements in practice
+# let's go over the for loop: 
+
  for(some index number less than another number){
  	do some stuff
  }
@@ -46,6 +92,22 @@ timeTables = array()	# create a new empty array we're going to use in the for lo
  # test it out and see what timeTables has at the end...
 # make sure to do your initializations OUTSIDE (and BEFORE) your for loop
 
+# a really corny example of for & if statements:
+# youre a head chef. You have a sous-chef. 
+# when you had your sous-chef a bowl of veggies, you want him to chop each one. 
+# however, he should first check to see the veggie is rotten
+for(i in seq_along(veggies)){
+	veggie = veggies[i]
+	if(veggie != rotten){
+		throw away veggie 
+	} else{
+		chop veggie
+	}
+	#once the for loop has gone through it will iterate over and he'll get the next veggie
+}
+# the problem we'll see is that in this case, the sous-chef doesnt return anything back to us. the veggies just sit there, chopped. 
+
+
 # let's put this to use:
 data(Loblolly)
 
@@ -54,47 +116,95 @@ seeds = split(Loblolly, Loblolly$Seed)
 for(i in seq_along(seeds)){
 	print(i)
 }
+
 # seq_along(seeds) is basically c(1:14) but what if you add another Seed
 # and forget to change 14 to 15, then you'll only go through the first 14. 
 # seq_along(seeds) is a more resillient, dynamic way. It's called softcoding, 
-# whereas c(1:14) is called hardcoding. Hardcoding, like wet code is something 
-# you want to avoid, DRY & Soft code... 
+# whereas c(1:14) is called hardcoding. Hardcoding, like wet code is something you want to avoid 
+# DRY & Soft code is good.... 
+
+# let's say we want to calculate the average growth between timepoints
+# we need an array to store 
+ allRates = vector("list", length = length(names(seeds)))
+ for(i in seq_along(seeds)){
+   growth = array()
+   x = seeds[[i]]
+   m = 1
+   k = 2
+   for(j in 1:nrow(x)){
+     if(k > nrow(x)){
+       break
+     } else {
+       rate = (x$height[k] - x$height[m])/(x$age[k] - x$age[m])
+       growth[j] = rate
+       m = m + 1
+       k = k + 1 
+     }
+    }
+   dev.new()
+   plot.ts(growth)
+
+   allRates[[i]] = growth
+ } 
+ allRates = do.call(rbind, allRates)
 
 
+# ok but this is a MESS. 
+# let's clean this up with the use of some functions! 
 
-for(i in 1:nrow(myData)){
-	subject = myData[i, ]
+myFunc = function(argument1, argument2, argument3){
+	if(argument3 == true){
+		do something with argument1 & argument2
+	}
+	return(some new value)
+}
+
+myValue = myFunc(5, 10, TRUE)
+# let's dissect this a bit
+
+
+# let's put this to use in our gnarly for loop ^^ 
+# we want to write functions that do only one thing. 
+# this way we can reuse them as much as possible. 
+# if you have a sous-chef whose in charge of chopping vegetables 
+# and grilling meat and baking souffle's all at once, you probably 
+# never need all three of these done at the same time... 
+
+# here we have two distinct things, we calculate rates of growth and we plot. 
+# let's write functions to handle these for us
+
+calculateGrowth = function(x){
+   growth = array()
+   m = 1
+   k = 2
+   for(j in 1:nrow(x)){
+     if(k > nrow(x)){
+       break
+     } else {
+       rate = (x$height[k] - x$height[m])/(x$age[k] - x$age[m])
+       growth[j] = rate
+       m = m + 1
+       k = k + 1 
+     }
+    }
+    return(growth)
+}
+
+plotGrowth = function(growth){
 	dev.new()
-	ggplot(subject, aes(x=))
+	plot.ts(growth)
+	# note the lack of return value, this is totally fine! 
 }
 
+# now our for loop looks like: 
+allRates = vector("list", length = length(names(seeds)))
+ for(i in seq_along(seeds)){
+ 	x = seeds[[i]]
+ 	myGrowth = calculateGrowth(x)
+ 	plotGrowth(myGrowth)
+ 	allRates[[i]] = myGrowth
+ }
 
-# let's test this out using our first dataset:
-# remember how to import csv data into R?
-myData = read.csv("mydata.csv", header = T, stringsAsFactors = F)
-# one sidenote: read.csv is a function, it has a function name (read.csv),
-# it accepts arguments, (filename, header, stringsAsFactors)
-# and it returns something back to you, in this case the data file you wish to import
-# you then save the returned data frame in a variable, in this case, myData. 
-# we'll see how to write our own functions shortly. 
-
-for(i in 1:nrow(myData)){
-	print(i)
-}
-# where i is our index
-# and 1:nrow is an array of values that i will equal to
-
-# now we can use i to do something "useful"
-for(i in 1:nrow(myData)){
-	print(myData[i, ])
-}
-
-# and then something a little more useful:
-for(i in 1:nrow(myData)){
-	subject = myData[i, ]
-	dev.new()
-	ggplot(subject, aes(x=))
-}
 
 
 # a note on SAVING as Charlie brought up last time. 
