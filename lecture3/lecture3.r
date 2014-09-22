@@ -76,10 +76,10 @@ if(gender == "female" || gender == "male"){
 x
 # notice that its only 1024, the last value. Everytime through x gets rewritten. 
 # what if we want to save all of our 2^x times tables? 
-timeTables = array()	# create a new empty array we're going to use in the for loop
+exponentTables = array()	# create a new empty array we're going to use in the for loop
  for(i in c(1:10)){
  	x = 2^i
- 	timeTables[i] = x
+ 	exponentTables[i] = x
  }
  # each time through x get's a new value, but this time we store the value
  # into the next cell in the timeTables array
@@ -98,7 +98,7 @@ timeTables = array()	# create a new empty array we're going to use in the for lo
 # however, he should first check to see the veggie is rotten
 for(i in seq_along(veggies)){
 	veggie = veggies[i]
-	if(veggie != rotten){
+	if(veggie == rotten){
 		throw away veggie 
 	} else{
 		chop veggie
@@ -135,6 +135,7 @@ for(i in seq_along(seeds)){
      if(k > nrow(x)){
        break
      } else {
+     	# rate = (y2 - y1)/(x2 - x1)	
        rate = (x$height[k] - x$height[m])/(x$age[k] - x$age[m])
        growth[j] = rate
        m = m + 1
@@ -146,7 +147,7 @@ for(i in seq_along(seeds)){
 
    allRates[[i]] = growth
  } 
- allRates = do.call(rbind, allRates)
+  allRates = as.data.frame(do.call(rbind, allRates))
 
 
 # ok but this is a MESS. 
@@ -205,7 +206,7 @@ for(i in seq_along(seeds)){
  	plotGrowth(myGrowth)
  	allRates[[i]] = myGrowth
 }
-allRates = do.call(rbind, allRates)
+allRates = as.data.frame(do.call(rbind, allRates))
 
 # wow, that looks way better, is more functional. 
 # keep in mind that when you're code gets longer 
