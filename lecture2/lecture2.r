@@ -110,6 +110,7 @@ names = c("yosemite","tahoe","mariposa","humbolt","lostcoast","kindscanyon","seq
           ,"mybackyard","zion","shasta","yreka","baker","hood","shasta","yreka","baker","rainier"
           ,"sthelens")
 for(i in seq_along(uniqueSeeds)){
+  print(i)
   Loblolly$Name[which(Loblolly$Seed == uniqueSeeds[i])] = names[i]
 }
 # but don't worry about that for now, it'll make more sense in a bit. 
