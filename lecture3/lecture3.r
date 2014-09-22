@@ -181,6 +181,7 @@ calculateGrowth = function(x){
      if(k > nrow(x)){
        break
      } else {
+       # rate = (y2 - y1)/(x2 - x1)	
        rate = (x$height[k] - x$height[m])/(x$age[k] - x$age[m])
        growth[j] = rate
        m = m + 1
@@ -196,15 +197,41 @@ plotGrowth = function(growth){
 	# note the lack of return value, this is totally fine! 
 }
 
-# now our for loop looks like: 
+# now our code looks like: 
 allRates = vector("list", length = length(names(seeds)))
- for(i in seq_along(seeds)){
+for(i in seq_along(seeds)){
  	x = seeds[[i]]
  	myGrowth = calculateGrowth(x)
  	plotGrowth(myGrowth)
  	allRates[[i]] = myGrowth
- }
+}
+allRates = do.call(rbind, allRates)
 
+# wow, that looks way better, is more functional. 
+# keep in mind that when you're code gets longer 
+# the need for functions will be greatly increased
+
+# a function I've written and used many many many times: 
+
+importData = function(pattern, recursive){
+	# pattern is the String pattern you want to match in the file names
+	# recursive is a Boolean value whether or not you want to search all folders from your current location
+	filesToImport = list.files(pattern = pattern, recursive = recursive)
+	yoda = null
+	for(i in seq_along(filesToImport){
+		x = read.csv(filesToImport[i], header = TRUE, stringsAsFactors = FALSE)
+		if(is.null(yoda)){
+			yoda = x
+		} else {
+			yoda = rbind(yoda, x)
+		}
+	}
+	return(yoda); 
+}
+
+myData = importData(".csv", FALSE)
+myT1Data = importData("T1.csv", TRUE)
+myT2Data = importData("T2.csv", TRUE)
 
 
 # a note on SAVING as Charlie brought up last time. 
