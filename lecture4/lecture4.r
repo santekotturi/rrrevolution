@@ -60,7 +60,11 @@ yoda = importData(myFiles)
 # what happens if we add another file? 
 # what happens when we change the file names?
 
+years = split(yoda, yoda$year)
 
+# let's keep our analysis simple, let's just find the average air temp and mer.winds for each year
+
+for(i in seq_along())
 
 
 
