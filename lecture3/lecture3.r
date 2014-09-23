@@ -244,3 +244,30 @@ myT2Data = importData("T2.csv", TRUE)
 # or you can append a new column to a dataframe; data$sums = rowSums(myData)
 # the last way to save something is to write a function that returns the desired value 
 # we'll see how to do this last one in a bit
+ 
+ 
+ # task: 
+ # write a function that returns the dimensions of any dataframe
+ # and save that value in a new variable 
+ 
+ returnDimensions = function(x){
+   if(is.null(dim(x))){
+     dimensions = length(x)
+   } else {
+     dimensions = dim(x)
+   }
+   return(dimensions)
+ }
+ 
+ 
+LobDimensions = returnDimensions(Loblolly)
+FormDimensions = returnDimensions(Formaldehyde)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
