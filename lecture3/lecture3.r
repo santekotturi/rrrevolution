@@ -219,7 +219,7 @@ importData = function(pattern, recursive){
 	# recursive is a Boolean value whether or not you want to search all folders from your current location
 	filesToImport = list.files(pattern = pattern, recursive = recursive)
 	yoda = null
-	for(i in seq_along(filesToImport){
+	for(i in seq_along(filesToImport)){
 		x = read.csv(filesToImport[i], header = TRUE, stringsAsFactors = FALSE)
 		if(is.null(yoda)){
 			yoda = x
@@ -227,7 +227,7 @@ importData = function(pattern, recursive){
 			yoda = rbind(yoda, x)
 		}
 	}
-	return(yoda); 
+	return(yoda)
 }
 
 myData = importData(".csv", FALSE)
