@@ -111,7 +111,6 @@ ddply()
 # in ddply it would be: 
 
 meanAndVar = function(x){
-  x$air.temp. = as.numeric(x$air.temp.)
   meanAirTemp = mean(x$air.temp., na.rm = T)
   varAirTemp = var(x$air.temp., na.rm = T)
   year = x$year[1]
@@ -120,6 +119,7 @@ meanAndVar = function(x){
 }
 
 require(plyr)
+myData$air.temp. = as.numeric(myData$air.temp.) # fix that silly character problem
 resultsDF = ddply(myData, .(year), meanAndVar)
 
 # ddply is great but I really recommend taking the time to learn 
