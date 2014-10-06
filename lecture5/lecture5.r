@@ -48,6 +48,166 @@ myFiles = list.files(pattern = "YOUR_GREP_PATTERN_HERE", recursive = TRUE or FAL
 
 # calculate the average air temp for each month within in year. 
 
+# first we need to load the El-Nino Data. 
+# set your working directory to /lecture4
+# create the list of files to import: 
+myFiles = list.files(pattern = ".csv", recursive = TRUE)
+
+# we need to define our import funciton:
+importData = function(listOfFilesToImport){
+	yoda = NULL
+	for(i in seq_along(listOfFilesToImport)){
+		x = read.csv(listOfFilesToImport[i], header = TRUE, stringsAsFactors = FALSE)
+		if(is.null(yoda)){
+			yoda = x
+		} else {
+			yoda = rbind(yoda, x)
+		}
+	}
+	return(yoda)
+}
+
+# and then run the import function, saving our data to a dataframe called myData:
+myData = importData(myFiles)
+
+# we need to split by two levels, years & months. 
+# there's a few ways to do this but the two most logical are:
+# 1. split by both levels:
+monthsByYear = split(myData, list(myData$year, myData$month))
+# what did this create:
+names(monthsByYear)
+# this works but we need to do a lot of name/id tracking 
+# and doesn't leave us with very modular code (ie. what happens if we want to do some other yearly calculations?)
+results = list()
+for(i in seq_along(monthsByYear)){
+	x = monthsByYear[[i]]
+	if(nrow(x) > 1){		#if there's no data for this month & year, skip it...
+		year = x$year[1]
+		month = x$month[1]
+		x$air.temp. = as.numeric(x$air.temp.)
+		aveMonthTemp = mean(x$air.temp., na.rm=T)
+		data = as.data.frame(cbind(year, month, aveMonthTemp))
+		results[[i]] = data
+	} else {
+		print("skipping empty dataset")
+		next
+	}
+}
+resultsDF = do.call(rbind, results)
+
+
+years = split(myData, myData$year)
+
+# our backbone structure will now revolve around this:
+# iterate over each year
+for(i in seq_along(years)){
+	x = years[[i]]
+	# any yearly calculations you want...put them here
+	# someCalculation = calculateThis(x)
+	# anotherCalc = moreCalc(x)
+	# somePlot = plotMyData(x)
+}
+
+# ok, let's build this
+
+averageMonthTemp = function(x){
+	months = split(x, x$month)
+	monthList = list()
+	for(k in seq_along(months)){
+		y = months[[k]]
+		month = y$month[1]
+		y$air.temp. = as.numeric(y$air.temp.)
+		aveMonthTemp = mean(y$air.temp., na.rm=T)
+		monthTemp = as.data.frame(cbind(month, aveMonthTemp))
+		monthList[[k]] = monthTemp
+	}
+
+	monthData = do.call(rbind, monthList)
+	return(monthData)
+}
+
+results = list()
+for(i in seq_along(years)){
+	print(i)
+	x = years[[i]]
+	year = x$year[1]
+	
+	monthData = averageMonthTemp(x)
+	
+	monthData$year = year
+	results[[i]] = monthData
+}
+resultsDF = do.call(rbind, results)
+
+# quick review:
+# we have two ways of handling this slightly more complicated task:
+# 1) we can split by two levels and then handle each task within the same for loop
+# or 2) we can split by our larger factor first (year) and then write a function to help us with our inner (witin each year) task. 
+# the second way may seem more complicated, however, what if your boss asks you to add another step?
+# you could quickly have a large mess of unmanageable and annoying code. 
+
+# herein lies the art of data science, learning when to write a quick one-off code snippet that handles a task quickly
+# versus writing a more well orchestrated, more elaborate and resillient analysis pathway
+
+
+# splitting by more than one factor can be a good idea but it also pidgeon holes you
+# if you split by year & month then you basically can only do monthly analysis. 
+# what if you want to compare average annual temps to average monthly temps? 
+# you would need to write two different for loops, one to calc year & another more months
+# then a third to put it all together. 
+
+# let's define a plotting function and then add it to our analysis:
+
+plotMonthlyAverages = function(x){
+	require(ggplot2)
+	require(reshape2)
+	melted = melt(x, id.vars=c("year", "month"))
+	dev.new()
+	ggplot(melted, aes(x=month, y=value, group=variable)) + 
+		geom_line(aes(linetype=variable)) + 
+		xlab("Month") + 
+		ylab("Temperature (C)") + 
+		ggtitle(paste("Month Temps for year 19", x$year[1], sep=""))
+	ggsave(paste("MonthTemps_19", x$year[1], ".pdf", sep=""))
+	dev.off()
+}
+
+results = list()
+for(i in seq_along(years)){
+	print(i)
+	x = years[[i]]
+	year = x$year[1]
+	avgYearTemp = mean(as.numeric(x$air.temp.), na.rm = T)
+	
+	monthData = averageMonthTemp(x)
+	monthData$year = year
+	monthData$yearAvg = avgYearTemp
+
+	plotMonthlyAverages(monthData) 	# pretty simple to add a graph if we wanted. 
+
+	results[[i]] = monthData
+}
+resultsDF = do.call(rbind, results)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
