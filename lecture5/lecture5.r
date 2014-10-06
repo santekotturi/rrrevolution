@@ -1,8 +1,8 @@
 # topics to cover: 
 
 # 1) regex: pattern, grep and gsub
-# 2) sat^2
-# 3) sat^3 
+# 2) sat pt2: multiple splits
+# 3) sat pt3: distributed analysis into functions
 
 
 # Regular Expressions
