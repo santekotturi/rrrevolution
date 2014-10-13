@@ -127,6 +127,7 @@ longData2 <- read.table(header=T, text='
        4   M     cond2        12.2
  ')
 
+library(plyr)
 summarized = summarySE(longData2, measurevar="measurement", groupvars=c("subject","condition"))
 
 graph3 = ggplot(summarized, aes(x=condition, y=measurement, group=subject)) + 
@@ -146,9 +147,8 @@ graph3 = graph3 +
 # IF YOU RELY ON R TO SCALE YOUR AXES, IT WILL THE GRAPH TO YOUR DATA AND CAN BE MISLEADING
 # I RECOMMEND FIRST PLOTTING ALL YOUR DATA TO SEE WHAT RANGE WILL FIT ALL YOUR DATA
 # THEN HARDCODE SOME LIMITS...
-graph3 = graph3 + 
-		 scale_y_continuous(limits=c(4, 16),    # Set y range
-                       breaks=0:20*4)
+graph3 + scale_y_continuous(limits=c(4, 16), breaks=4:16*1)
+graph3 = graph3 + scale_y_continuous(limits=c(4, 16))
 
 # legend:
 graph3 = graph3 + 
