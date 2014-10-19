@@ -3,6 +3,8 @@
 # ggplot2 is an awesome library for creating powerful graphs quickly. 
 # to install: 
 install.packages("ggplot2")
+install.packges("plyr")
+install.packages("reshape2")
 # and load it into R when you want to use it:
 library(ggplot2)
 
@@ -40,14 +42,14 @@ longData <- read.table(header=T, text='
 # if you want to see how each condition compares, you need to store all of that in one column
 # fortunately there's a function for going from wide to long (melt) and from long to wide (dcast)
 
-longData = melt(wideData, id.vars=c("subject","sex"))
+longData = melt(wideData, id.vars=c("subject","sex"), measure.var=c("control", "cond1", "cond2"))
 
 # you should start thinking about your data as either an id.vars or a measure.vars. 
 # columns like "subjectID", "timepoint", "group", "class" etc are typically id.vars
 # while measure.vars are actual data points. 
 
 # you can be more specific with melt: 
-data.long <- melt(origdata.wide,
+longData <- melt(wideData,
                   # ID variables - all the variables to keep but not split apart on
                   id.vars=c("subject","sex"),
                   # The source columns
@@ -90,7 +92,7 @@ graph2 = ggplot(longData, aes(x = condition, y = measurement, group = subject)) 
 graph2 = graph2 + geom_point()   
 
 # get the colors to match:
-graph2 = graph2 + geom_point(aes(color=as.factor(subject)))   
+graph2 = graph2 + geom_point(aes(color=factor(subject), shape=factor(subject)))   
 
 
 # adding standard error bars is pretty common and some functions have been written to help us. 
@@ -147,7 +149,7 @@ graph3 = graph3 +
 # IF YOU RELY ON R TO SCALE YOUR AXES, IT WILL THE GRAPH TO YOUR DATA AND CAN BE MISLEADING
 # I RECOMMEND FIRST PLOTTING ALL YOUR DATA TO SEE WHAT RANGE WILL FIT ALL YOUR DATA
 # THEN HARDCODE SOME LIMITS...
-graph3 + scale_y_continuous(limits=c(4, 16), breaks=4:16*1)
+graph3 + scale_y_continuous(limits=c(4, 16))
 graph3 = graph3 + scale_y_continuous(limits=c(4, 16))
 
 # legend:
@@ -159,6 +161,8 @@ graph3 = graph3 +
 # themes and saving
 # you can personalize every aspect of the graph: http://docs.ggplot2.org/0.9.2.1/theme.html
 graph3 + theme(panel.background = element_rect(colour = "pink"))
+
+graph3 = graph3 + theme_bw()
 
 ggsave("Subject_Condition_SEbars.pdf")
 

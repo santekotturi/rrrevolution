@@ -51,7 +51,7 @@ myFiles = list.files(pattern = "YOUR_GREP_PATTERN_HERE", recursive = TRUE or FAL
 # first we need to load the El-Nino Data. 
 # set your working directory to /lecture4
 # create the list of files to import: 
-myFiles = list.files(pattern = ".csv", recursive = TRUE)
+myFiles = list.files(pattern = "ElNinoData", recursive = TRUE)
 
 # we need to define our import funciton:
 importData = function(listOfFilesToImport){
@@ -73,7 +73,9 @@ myData = importData(myFiles)
 # we need to split by two levels, years & months. 
 # there's a few ways to do this but the two most logical are:
 # 1. split by both levels:
+years = split(myData, myData$year)
 monthsByYear = split(myData, list(myData$year, myData$month))
+
 # what did this create:
 names(monthsByYear)
 # this works but we need to do a lot of name/id tracking 
@@ -126,6 +128,7 @@ averageMonthTemp = function(x){
 	return(monthData)
 }
 
+years = split(myData, myData$year)
 results = list()
 for(i in seq_along(years)){
 	print(i)
