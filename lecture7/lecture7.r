@@ -32,7 +32,7 @@ unique(df$Valence)
 ###############################################
 ############## ANALYSIS PLAN ##################
 ###############################################
-###### 1. calculate the mean response to all 8 conditions: 
+###### 1. calculate the mean response to all 8 valences: 
 ############# 1) angry + push
 ############# 2) angry + pull
 ############# 3) disgust + push
@@ -51,18 +51,44 @@ unique(df$Valence)
 ### once by Valnce
 ### then by Condition 
 
-conditions = split(df, df$Valence)
-names(conditions) #just print them out to double check
+valences = split(df, df$Valence)
+names(valences) #just print them out to double check
 
+# we dont jump straight into writing a for loop to calculate our
+# response times for each subject by each condition
+# we need to write our code first for one subject in one condition and then expand out. 
 
+angry = valences[[1]] # remember the double brackets! 
 
+angrySubjects = split(angry, angry$Subject)
+names(angrySubjects)
 
+firstSub = angrySubjects[[1]]
+head(firstSub)
+# whoa, there's a lot of extra stuff in there, let's subset only the data we need to work with:
+colnames(firstSub)
+x = subset(firstSub, select=c("Subject", "CorrectResponse", 
+							  "Stimulus.Resp", "Stimulus.RT", "Valence" ))
 
+# are the responses correct?
+x$CorrectResponse == x$Stimulus.Resp
 
+# we can subset out the incorrect ones:
+correct = x[x$CorrectResponse == x$Stimulus.Resp, ]
+incorrect = x[x$CorrectResponse != x$Stimulus.Resp, ]
 
+responses = split(correct, correct$CorrectResponse)
+correctPush = responses[[1]]
+correctPull = responses[[2]]
 
+meanPushRT = mean(correctPush$Stimulus.RT)
+meanPullRT = mean(correctPull$Stimulus.RT)
 
+# let's start putting this together 
+subid = x$Subject[1]
+valence = x$Valence[1]
 
+data = as.data.frame(cbind(subid, valence, meanPushRT, meanPullRT))
 
 
 
