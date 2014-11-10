@@ -113,7 +113,7 @@ newFunc = function(x){
 	print(x)
 }
 
-output = ddply(dfx, .(group, sex), newFunc)
+result = ddply(dfx, .(group, sex), newFunc)
 
 # this is really cool, if we wanted to do this the manual way we would have to:
 
@@ -130,20 +130,46 @@ for(i in seq_along(groups)){
 # we get the same exact results from our print statements, however ddply did A LOT for us! 
 
 # note: we could have made our manual lives easier by splitting by two variables: 
-groupsByGender = split(dfx, list(dfx$group, dfx$sex))
-for(i in seq_along(groupsByGender)){
-	x = groupsByGender[[i]]
-	print(x)
+# groupsByGender = split(dfx, list(dfx$group, dfx$sex))
+# for(i in seq_along(groupsByGender)){
+# 	x = groupsByGender[[i]]
+# 	print(x)
+# }
+
+# let's update our newFunc to do something more useful than printing out each subset
+
+newFunc = function(x){
+	meanAge = mean(x$age)
+	return(meanAge)
 }
 
+result = ddply(dfx, .(group, sex), newFunc)
 
 
+# this works great if we only want means, but what if we want standard dev too?
+newFunc = function(x){
+	meanAge = mean(x$age)
+	sdAge = sd(x$age)
 
+	# This is NOT allowed
+	#return(meanAge, sdAge)
 
+	# we need a new step where we combine the output because we can only return ONE item	
+	outputData = as.data.frame(cbind(meanAge, sdAge))
+	return(outputData)
 
+}
 
+result = ddply(dfx, .(group, sex), newFunc)
 
+# ok so we've worked with the .fun argument, what about the .variables:
+# what if only wanted group means (no care for gender):
 
+result = ddply(dfx, .(group), newFunc)
+# HOW EASY IS THAT? 
+
+# and then only gender differences ignoring group:
+result = ddply(dfx, .(sex), newFunc)
 
 
 
