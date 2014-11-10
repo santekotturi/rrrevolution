@@ -172,6 +172,65 @@ result = ddply(dfx, .(group), newFunc)
 result = ddply(dfx, .(sex), newFunc)
 
 
+# now let's revisit our original analysis plan:
+
+# first we need our function:
+# old
+calculateValenceRT = function(valences){
+	valenceResults = list()
+	for(v in seq_along(valences)){
+		x = valences[[v]]
+
+		correct = x[x$CorrectResponse == x$Stimulus.Resp, ]
+		incorrect = x[x$CorrectResponse != x$Stimulus.Resp, ]
+
+		responses = split(correct, correct$CorrectResponse)
+		correctPush = responses[[1]]
+		correctPull = responses[[2]]
+
+		meanPushRT = mean(correctPush$Stimulus.RT)
+		meanPullRT = mean(correctPull$Stimulus.RT)
+
+		# let's start putting this together 
+		# we need grab our id variables so that our data has the correct labels
+		subid = x$Subject[1]
+		valence = x$Valence[1]
+		# if we had a group variable and/or time variable we get it here too:
+		#time = x$Time[1]
+		#group = x$Group[1]
+
+		data = as.data.frame(cbind(subid, valence, meanPushRT, meanPullRT))
+
+		valenceResults[[v]] = data
+
+	}
+	subjectResults = do.call(rbind, valenceResults)
+	
+	# then we need to add a return statement
+	return(subjectResults)
+}
+
+# new
+calculateValenceRTv2 = function(x){
+
+		correct = x[x$CorrectResponse == x$Stimulus.Resp, ]
+		incorrect = x[x$CorrectResponse != x$Stimulus.Resp, ]
+
+		responses = split(correct, correct$CorrectResponse)
+		correctPush = responses[[1]]
+		correctPull = responses[[2]]
+
+		meanPushRT = mean(correctPush$Stimulus.RT)
+		meanPullRT = mean(correctPull$Stimulus.RT)
+
+		data = as.data.frame(cbind(meanPushRT, meanPullRT))
+
+		return(data)
+}
+
+
+# then we can ddply it:
+results2 = ddply(df, .(Subject, Valence), calculateValenceRTv2)
 
 
 
@@ -180,12 +239,33 @@ result = ddply(dfx, .(sex), newFunc)
 
 
 
+# next up: MERGE! 
 
+# first we need to make some work for ourselves, we usually have to merge data that is in wide format
+# so let's split up our results2 , convert to wide format (requires going full long first)
+# and then we can merge our two datasets: 
 
+valences = split(results2, results2$Valence)
+val1 = rbind(valences[[1]], valences[[2]])
+val1long = melt(val1, id.vars=c("Subject", "Valence"), measure.vars=c("meanPushRT", "meanPullRT"))
+val1wide = dcast(val1long, Subject ~ Valence + variable, value.var="value")
 
+val2 = rbind(valences[[3]], valences[[4]])
+val2long = melt(val2, id.vars=c("Subject", "Valence"), measure.vars=c("meanPushRT", "meanPullRT"))
+val2wide = dcast(val2long, Subject ~ Valence + variable, value.var="value")
 
+# now let's merge our two datasets, val1wide & val2wide
+?merge
 
+merge(val1wide, val2wide, by="Subject")
 
+# where "by" is the shared variable name. 
+
+#save the result:
+mergedResults = merge(val1wide, val2wide, by="Subject")
+
+# and write it out for safe keeping:
+write.csv(mergedResults, "mergedResults.csv", row.names = F)
 
 
 
