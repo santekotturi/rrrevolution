@@ -152,7 +152,7 @@ newFunc = function(x){
 	sdAge = sd(x$age)
 
 	# This is NOT allowed
-	#return(meanAge, sdAge)
+	# return(meanAge, sdAge)
 
 	# we need a new step where we combine the output because we can only return ONE item	
 	outputData = as.data.frame(cbind(meanAge, sdAge))
@@ -233,6 +233,23 @@ calculateValenceRTv2 = function(x){
 results2 = ddply(df, .(Subject, Valence), calculateValenceRTv2)
 
 
+# an even fancier way, because we split by CorrectResponse as well:
+
+fancyFunc = function(x){
+    
+    correct = x[x$CorrectResponse == x$Stimulus.Resp, ]
+    meanRT = mean(correct$Stimulus.RT)
+    sdRT = sd(correct$Stimulus.RT)
+    
+    output = as.data.frame(cbind(meanRT, sdRT))
+    return(output)
+    
+}
+
+
+results3 = ddply(df, .(Subject, Valence, CorrectResponse), fancyFunc)
+
+
 
 
 
@@ -244,7 +261,7 @@ results2 = ddply(df, .(Subject, Valence), calculateValenceRTv2)
 # first we need to make some work for ourselves, we usually have to merge data that is in wide format
 # so let's split up our results2 , convert to wide format (requires going full long first)
 # and then we can merge our two datasets: 
-
+library(reshape2)
 valences = split(results2, results2$Valence)
 val1 = rbind(valences[[1]], valences[[2]])
 val1long = melt(val1, id.vars=c("Subject", "Valence"), measure.vars=c("meanPushRT", "meanPullRT"))
