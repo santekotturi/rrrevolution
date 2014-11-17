@@ -1,6 +1,3 @@
-# today we'll be covering some fun R topics including:
-# 1. r on the web, rShiny, a way to code and collaborate 
-# 2. getting data off the web to analyze the world using twitter 
 
 
 # let's get started with rShiny
