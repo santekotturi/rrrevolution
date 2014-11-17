@@ -11,7 +11,7 @@ library(ggplot2)
 # only Windows users need to do this:
 download.file(url="http://curl.haxx.se/ca/cacert.pem", destfile="cacert.pem")
 
-cred <- OAuthFactory$new(consumerKey='23xnnDRhegPWHB1vtKJNCN6Qw',
+cred <- OAuthFactory$new(consumerKey='<my key>',
 						 consumerSecret='<Dont-you-want-to-know>',
 					     requestURL='https://api.twitter.com/oauth/request_token',
 						 accessURL='https://api.twitter.com/oauth/access_token',
