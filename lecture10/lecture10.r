@@ -15,3 +15,7 @@ runExample("01_hello")
 # then you can run:
 runApp("ourApp")
 runApp("ourApp", display.mode="showcase")
+
+# the rest of rShiny is covered online 
+
+
